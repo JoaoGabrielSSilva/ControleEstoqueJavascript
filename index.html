@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Estoque</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script> <!-- Biblioteca XLSX -->
+</head>
+<body>
+
+    <div class="container">
+        <h1>Controle de Estoque</h1>
+        
+        <form id="productForm">
+            <input type="text" id="name" placeholder="Nome do Produto" required>
+            <input type="number" id="quantity" placeholder="Quantidade" required>
+            <input type="text" id="price" placeholder="Preço" required>
+            <button type="submit">Adicionar Produto</button>
+        </form>
+
+        <!-- Botões de Importação e Exportação -->
+        <div class="buttons">
+            <input type="file" id="fileInput" accept=".xlsx">
+		<button id="forceLoadBtn">Carregar Planilha</button>
+
+        </div>
+
+        <!-- Tabela de produtos -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Quantidade</th>
+                    <th>Preço</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="productTable"></tbody>
+        </table>
+
+	<button id="exportBtn">Exportar Planilha</button>
+    </div>
+
+
+
+
+    <script src="script.js"></script>
+</body>
+</html>
