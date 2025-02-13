@@ -15,17 +15,6 @@ Esta aplicação foi desenvolvida para auxiliar no controle de estoque de uma em
 - **JavaScript** - Lógica de funcionamento.
 - **SheetJS (XLSX.js)** - Manipulação de arquivos Excel.
 
-## Como Executar
-1. Clone este repositório:
-   ```sh
-   git clone https://github.com/seu-usuario/controle-estoque.git
-   ```
-2. Acesse a pasta do projeto:
-   ```sh
-   cd controle-estoque
-   ```
-3. Abra o arquivo `index.html` em um navegador.
-
 ## Contribuição
 Sinta-se à vontade para contribuir com melhorias! Faça um fork do projeto, crie uma branch para suas alterações e envie um pull request.
 
