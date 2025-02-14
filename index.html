@@ -12,18 +12,18 @@
     <div class="container">
         <h1>Controle de Estoque</h1>
         
-        <form id="productForm">
-            <input type="text" id="name" placeholder="Nome do Produto" required>
-            <input type="number" id="quantity" placeholder="Quantidade" required>
-            <input type="text" id="price" placeholder="Preço" required>
+        <!-- Formulário para adicionar produtos -->
+        <form id="formularioProduto">
+            <input type="text" id="nome" placeholder="Nome do Produto" required>
+            <input type="number" id="quantidade" placeholder="Quantidade" required>
+            <input type="text" id="preco" placeholder="Preço" required>
             <button type="submit">Adicionar Produto</button>
         </form>
 
         <!-- Botões de Importação e Exportação -->
-        <div class="buttons">
-            <input type="file" id="fileInput" accept=".xlsx">
-		<button id="forceLoadBtn">Carregar Planilha</button>
-
+        <div class="botoes">
+            <input type="file" id="inputArquivo" accept=".xlsx"> <!-- Campo para selecionar arquivo XLSX -->
+            <button id="botaoForcarCarregar">Carregar Planilha</button> <!-- Botão para carregar a planilha -->
         </div>
 
         <!-- Tabela de produtos -->
@@ -36,15 +36,13 @@
                     <th>Ações</th>
                 </tr>
             </thead>
-            <tbody id="productTable"></tbody>
+            <tbody id="tabelaProdutos"></tbody> <!-- Corpo da tabela onde os produtos serão listados -->
         </table>
 
-	<button id="exportBtn">Exportar Planilha</button>
+        <!-- Botão para exportar a tabela -->
+        <button id="botaoExportar">Exportar Planilha</button>
     </div>
 
-
-
-
-    <script src="script.js"></script>
+    <script src="script.js"></script> <!-- Link para o arquivo JavaScript -->
 </body>
 </html>

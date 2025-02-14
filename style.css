@@ -18,7 +18,7 @@ h1 {
     text-align: center;
 }
 
-form {
+#formularioProduto {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -89,25 +89,28 @@ th {
     background-color: #0056b3;
 }
 
-.buttons {
+.botoes {
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
 }
 
-input[type="file"], button {
+#inputArquivo, #botaoForcarCarregar, #botaoExportar {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
     cursor: pointer;
 }
 
-button {
+#botaoForcarCarregar, #botaoExportar {
     background-color: #28a745;
     color: white;
 }
 
-button:hover {
+#botaoForcarCarregar:hover, #botaoExportar:hover {
     background-color: #218838;
 }
 
+#botaoExportar{
+    margin: 1rem auto;
+}

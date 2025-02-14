@@ -1,136 +1,138 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const productForm = document.getElementById("productForm");
-    const productTable = document.getElementById("productTable");
-    const fileInput = document.getElementById("fileInput");
-    const forceLoadBtn = document.getElementById("forceLoadBtn");
-    const exportBtn = document.getElementById("exportBtn");
+    // Obtenção dos elementos do DOM
+    const formularioProduto = document.getElementById("formularioProduto");  // Formulário para adicionar produtos
+    const tabelaProdutos = document.getElementById("tabelaProdutos");    // Tabela onde os produtos serão exibidos
+    const inputArquivo = document.getElementById("inputArquivo");        // Entrada de arquivo para importar a planilha
+    const botaoForcarCarregar = document.getElementById("botaoForcarCarregar"); // Botão para carregar os produtos manualmente
+    const botaoExportar = document.getElementById("botaoExportar");        // Botão para exportar os dados da tabela
 
-    let importedData = []; // Armazena os dados importados
-    let products = []; // Lista de produtos
+    let dadosImportados = []; // Armazena os dados importados da planilha
+    let produtos = [];        // Lista de produtos
 
     // Função para renderizar os produtos na tabela
-    function renderProducts() {
-        productTable.innerHTML = "";
-        products.forEach((product, index) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${product.name}</td>
+    function renderizarProdutos() {
+        tabelaProdutos.innerHTML = ""; // Limpa a tabela
+        produtos.forEach((produto, indice) => {
+            const linha = document.createElement("tr");
+            linha.innerHTML = `
+                <td>${produto.nome}</td>
                 <td>
-                    <button onclick="updateQuantity(${index}, -1)">-</button>
-                    ${product.quantity}
-                    <button onclick="updateQuantity(${index}, 1)">+</button>
+                    <button onclick="atualizarQuantidade(${indice}, -1)">-</button>
+                    ${produto.quantidade}
+                    <button onclick="atualizarQuantidade(${indice}, 1)">+</button>
                 </td>
-                <td>R$ ${product.price.toFixed(2)}</td>
+                <td>R$ ${produto.preco.toFixed(2)}</td>
                 <td>
-                    <button onclick="editProduct(${index})">Editar</button>
-                    <button onclick="deleteProduct(${index})">Excluir</button>
+                    <button onclick="editarProduto(${indice})">Editar</button>
+                    <button onclick="excluirProduto(${indice})">Excluir</button>
                 </td>
             `;
-            productTable.appendChild(row);
+            tabelaProdutos.appendChild(linha);
         });
     }
 
-    // Função para processar dados importados
-    function processImportedData() {
-        if (importedData.length === 0) {
+    // Função para processar os dados importados
+    function processarDadosImportados() {
+        if (dadosImportados.length === 0) {
             alert("Nenhuma planilha foi importada ainda!");
             return;
         }
-        products = importedData;
-        renderProducts();
+        produtos = dadosImportados; // Atualiza a lista de produtos com os dados importados
+        renderizarProdutos();       // Chama a função para renderizar os produtos na tabela
     }
 
     // Importação da planilha XLSX
-    fileInput?.addEventListener("change", (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
+    inputArquivo?.addEventListener("change", (evento) => {
+        const arquivo = evento.target.files[0];  // Obtém o arquivo selecionado
+        if (!arquivo) return;  // Se não houver arquivo, sai da função
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: "array" });
-            const sheetName = workbook.SheetNames[0];
-            const sheet = workbook.Sheets[sheetName];
-            let jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        const leitor = new FileReader();  // Cria o objeto FileReader para ler o arquivo
+        leitor.onload = (e) => {
+            const dados = new Uint8Array(e.target.result);  // Obtém o conteúdo do arquivo como array de bytes
+            const livro = XLSX.read(dados, { type: "array" });  // Lê os dados da planilha XLSX
+            const nomeAba = livro.SheetNames[0];  // Obtém o nome da primeira aba da planilha
+            const aba = livro.Sheets[nomeAba];   // Obtém a primeira aba da planilha
+            let dadosJson = XLSX.utils.sheet_to_json(aba, { header: 1 });  // Converte a aba para JSON
 
-            if (jsonData.length < 2) {
+            if (dadosJson.length < 2) {
                 alert("Planilha vazia ou formato incorreto!");
                 return;
             }
 
-            const headers = jsonData[0].map(header => header.toLowerCase().trim());
-            const nameIndex = headers.indexOf("nome");
-            const quantityIndex = headers.indexOf("quantidade");
-            const priceIndex = headers.indexOf("preço");
+            const cabecalhos = dadosJson[0].map(cabecalho => cabecalho.toLowerCase().trim());  // Converte os cabeçalhos para minúsculas e remove espaços
+            const indiceNome = cabecalhos.indexOf("nome");
+            const indiceQuantidade = cabecalhos.indexOf("quantidade");
+            const indicePreco = cabecalhos.indexOf("preço");
 
-            if (nameIndex === -1 || quantityIndex === -1 || priceIndex === -1) {
+            if (indiceNome === -1 || indiceQuantidade === -1 || indicePreco === -1) {
                 alert("A planilha deve conter as colunas: Nome, Quantidade e Preço.");
                 return;
             }
 
-            importedData = jsonData.slice(1).map(row => ({
-                name: row[nameIndex] || "Produto Desconhecido",
-                quantity: parseInt(row[quantityIndex]) || 0,
-                price: parseFloat(row[priceIndex]) || 0
+            // Converte os dados da planilha para um formato adequado para os produtos
+            dadosImportados = dadosJson.slice(1).map(linha => ({
+                nome: linha[indiceNome] || "Produto Desconhecido",  // Define nome padrão caso não haja valor
+                quantidade: parseInt(linha[indiceQuantidade]) || 0,   // Define quantidade padrão caso não haja valor
+                preco: parseFloat(linha[indicePreco]) || 0           // Define preço padrão caso não haja valor
             }));
 
             alert("Planilha importada com sucesso! Clique em 'Carregar Planilha' para exibir os produtos.");
         };
-        reader.readAsArrayBuffer(file);
+        leitor.readAsArrayBuffer(arquivo);  // Lê o arquivo como ArrayBuffer
     });
 
     // Botão para forçar a exibição dos produtos importados
-    forceLoadBtn?.addEventListener("click", processImportedData);
+    botaoForcarCarregar?.addEventListener("click", processarDadosImportados);
 
     // Adiciona um novo produto
-    productForm?.addEventListener("submit", (event) => {
-        event.preventDefault();
-        
-        const name = document.getElementById("name").value.trim();
-        const quantity = parseInt(document.getElementById("quantity").value) || 0;
-        const price = parseFloat(document.getElementById("price").value) || 0;
+    formularioProduto?.addEventListener("submit", (evento) => {
+        evento.preventDefault();  // Previne o comportamento padrão do formulário (envio)
 
-        products.push({ name, quantity, price });
-        renderProducts();
-        productForm.reset();
+        const nome = document.getElementById("nome").value.trim();     // Obtém o nome do produto
+        const quantidade = parseInt(document.getElementById("quantidade").value) || 0;  // Obtém a quantidade do produto
+        const preco = parseFloat(document.getElementById("preco").value) || 0;  // Obtém o preço do produto
+
+        produtos.push({ nome, quantidade, preco });  // Adiciona o novo produto à lista
+        renderizarProdutos();  // Atualiza a tabela com os novos dados
+        formularioProduto.reset();  // Limpa o formulário
     });
 
     // Atualiza a quantidade de um produto
-    window.updateQuantity = (index, change) => {
-        if (products[index].quantity + change >= 0) {
-            products[index].quantity += change;
-            renderProducts();
+    window.atualizarQuantidade = (indice, alteracao) => {
+        if (produtos[indice].quantidade + alteracao >= 0) {  // Verifica se a quantidade não pode ficar negativa
+            produtos[indice].quantidade += alteracao;
+            renderizarProdutos();  // Atualiza a tabela
         }
     };
 
     // Exclui um produto
-    window.deleteProduct = (index) => {
-        products.splice(index, 1);
-        renderProducts();
+    window.excluirProduto = (indice) => {
+        produtos.splice(indice, 1);  // Remove o produto da lista
+        renderizarProdutos();  // Atualiza a tabela
     };
 
     // Edita um produto
-    window.editProduct = (index) => {
-        const product = products[index];
-        document.getElementById("name").value = product.name;
-        document.getElementById("quantity").value = product.quantity;
-        document.getElementById("price").value = product.price;
+    window.editarProduto = (indice) => {
+        const produto = produtos[indice];
+        document.getElementById("nome").value = produto.nome;
+        document.getElementById("quantidade").value = produto.quantidade;
+        document.getElementById("preco").value = produto.preco;
 
-        products.splice(index, 1);
-        renderProducts();
+        produtos.splice(indice, 1);  // Remove o produto da lista (ele será adicionado novamente após a edição)
+        renderizarProdutos();  // Atualiza a tabela
     };
 
     // Exporta a tabela para XLSX
-    exportBtn?.addEventListener("click", () => {
-        const data = products.map(p => ({
-            Nome: p.name,
-            Quantidade: p.quantity,
-            Preço: parseFloat(p.price).toFixed(2)
+    botaoExportar?.addEventListener("click", () => {
+        const dados = produtos.map(p => ({
+            Nome: p.nome,
+            Quantidade: p.quantidade,
+            Preço: parseFloat(p.preco).toFixed(2)
         }));
 
-        const ws = XLSX.utils.json_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Estoque");
-        XLSX.writeFile(wb, "estoque.xlsx");
+        const aba = XLSX.utils.json_to_sheet(dados);  // Converte os dados para uma aba de planilha
+        const livro = XLSX.utils.book_new();  // Cria um novo livro de trabalho
+        XLSX.utils.book_append_sheet(livro, aba, "Estoque");  // Adiciona a aba ao livro de trabalho
+        XLSX.writeFile(livro, "estoque.xlsx");  // Exporta o arquivo XLSX
     });
 });
