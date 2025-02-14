@@ -24,7 +24,7 @@ h1 {
     gap: 10px;
 }
 
-input, button {
+input, button, select {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
